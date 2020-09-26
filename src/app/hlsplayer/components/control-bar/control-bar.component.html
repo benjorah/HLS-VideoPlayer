@@ -1,0 +1,27 @@
+<div class="control-bar">
+
+    <div #videoSeekBar class="control-bar__seek control-bar__seekbar">
+        <span [ngStyle]="{'width': mediaCurrentTimePercent+'%'}" #videoProgress class="control-bar__progress"></span>
+    </div>
+
+    <div class="control-bar__playback-controls">
+        <button #actionButton class="control-bar__action-button control-btn play">
+      <i class="fa fa-play overlay-icon play-icon"></i>
+      <i class="fa fa-pause overlay-bar__action-icon pause-icon"></i>
+    </button>
+        <div class="control-bar__volume-control">
+            <button #volumeToggle class="control-btn control-bar__volume-toggle on">
+        <i class="fa fa-volume-up overlay-icon volume-on"></i>
+        <i class="fa fa-volume-off overlay-icon volume-off"></i>
+      </button>
+            <div #volumeSeekBar class="control-bar__volume-seekbar control-bar__seekbar">
+                <span [ngStyle]="{'width': volumePercent +'%'}" #volumeProgress class="control-bar__progress"></span>
+            </div>
+        </div>
+        <div class="control-bar__video-timings">
+            <div #mediaCurrentTime class="control-bar__start-time time">00:00:00</div>
+            /
+            <div #mediaDuration class="control-bar__end-time time">00:00:00</div>
+        </div>
+    </div>
+</div>

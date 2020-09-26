@@ -1,0 +1,15 @@
+<div [ngClass]="{
+  'strip-player':makePlayerNaked
+  }" (mouseenter)="detectMousePresence()" (mouseleave)="detectMouseAbsence()" class="video-player">
+
+    <div class="video-player__top-bar video-topbar">
+        <app-top-bar [title]="'A title'"></app-top-bar>
+    </div>
+    <video class="video-player__widget" #videoWidget>
+
+  </video>
+
+    <div class="video-player__control video-control">
+        <app-control-bar [controlConfig]="controlConfig"></app-control-bar>
+    </div>
+</div>
