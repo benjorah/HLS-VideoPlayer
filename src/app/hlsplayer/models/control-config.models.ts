@@ -3,8 +3,10 @@
 export interface ControlConfigModel {
 
   isPlaying : boolean;
-  volumeLevel : number;
+  volumeLevelPercent : number;
   mediaDuration : number;
   mediaCurrentTime : number ;
+  mediaCurrentTimePercent : number ;
+
 
 }

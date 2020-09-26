@@ -5,11 +5,20 @@
     <div class="video-player__top-bar video-topbar">
         <app-top-bar [title]="'A title'"></app-top-bar>
     </div>
-    <video class="video-player__widget" #videoWidget>
 
-  </video>
+    <div>
+        <video (playing)="playListener()" (loadedmetadata)="endedListener()" (ended)="endedListener()" (volumechange)="volumeChangeListener()" (timeupdate)="timeUpdateListener()" (loadeddata)="loadedDataListener()" (pause)="pauseListener()" class="video-player__widget"
+            #videoWidget>
+    </video>
+        <div [ngStyle]="{
+          'opacity': videoIsBuffering?'1':'0'
+          }" class="video-player__scrim"> <span>Buffering...</span></div>
+
+
+    </div>
+
 
     <div class="video-player__control video-control">
-        <app-control-bar [controlConfig]="controlConfig"></app-control-bar>
+        <app-control-bar (seekbarChanged)="seekbarChanged($event)" [controlConfig]="controlConfig"></app-control-bar>
     </div>
 </div>

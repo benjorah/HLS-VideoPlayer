@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ControlConfigModel } from '../../models/control-config.models';
+import { SliderEventModel } from '../../models/slider-event.model';
+import { HlsplayerService } from '../../services/hlsplayer.service';
 
 
 declare var Hls;
@@ -9,56 +11,152 @@ declare var Hls;
   templateUrl: './screen.component.html',
   styleUrls: ['./screen.component.scss']
 })
-export class ScreenComponent implements OnInit, AfterViewInit {
+export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('videoWidget') videoWidget: ElementRef;
+  videoPlayer;
   mediaIsPlaying = true;
-  makePlayerNaked= false;
-  controlConfig : ControlConfigModel={
+  makePlayerNaked = false;
+  videoIsBuffering = false;
+  checkInterval = 300.0; // check every 50 ms (do not use lower values)
+  lastPlayPos = 0;
+  currentPlayPos = 0;
+  controlConfig: ControlConfigModel = {
     isPlaying: false,
-    volumeLevel: .3,
-    mediaDuration: 10,
-    mediaCurrentTime: 4
-  }
+    volumeLevelPercent: 0,
+    mediaDuration: 0,
+    mediaCurrentTime: 0,
+    mediaCurrentTimePercent: 0
 
-  constructor() { }
+  };
+  hls;
+  constructor(
+    private changeDetector: ChangeDetectorRef,
+    private hlsService: HlsplayerService
+  ) { }
+  ngOnInit(): void {
+    setInterval(this.checkForBuffering.bind(this), this.checkInterval);
+
+  }
+  ngOnDestroy(): void {
+    this.hls.detachMedia();
+  }
 
 
   ngAfterViewInit() {
-    const video = this.videoWidget.nativeElement;
-    const videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
-    // const videoSrc = 'file:///Users/okey/Documents/vault/hls_transcoder/hls_assets/master_6sec.m3u8';
+    this.videoPlayer = this.videoWidget.nativeElement;
+    // const videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+    const videoSrc = 'https://playertest.longtailvideo.com/adaptive/captions/playlist.m3u8';
+
     if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(videoSrc);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        this.video.play();
+      this.hls = new Hls();
+      this.hls.loadSource(videoSrc);
+      this.hls.attachMedia(this.videoPlayer);
+      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        this.videoPlayer.muted = true;
+        this.videoPlayer.play();
       });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = videoSrc;
-      video.addEventListener('loadedmetadata', function () {
-        this.video.play();
+    } else if (this.videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+      this.videoPlayer.src = videoSrc;
+      this.videoPlayer.addEventListener('loadedmetadata', () => {
+        this.videoPlayer.play();
+
       });
     }
 
   }
 
+  // Check if video is playing
+  playListener() {
+    this.controlConfig = { ...this.controlConfig, isPlaying: true };
+    this.mediaIsPlaying = true;
+  }
 
-  ngOnInit(): void {
+  endedListener() {
+    this.videoPlayer.currentTime = 0;
+    this.controlConfig = { ...this.controlConfig, isPlaying: false };
+    this.mediaIsPlaying = false;
+  }
+
+  // update volume
+  volumeChangeListener() {
+    const volumeLevelPercent = this.videoPlayer.volume;
+    this.controlConfig = { ...this.controlConfig, volumeLevelPercent };
+  }
+
+  // update current time
+  timeUpdateListener() {
+    const currentTimeInSeconds = this.videoPlayer.currentTime;
+    const mediaCurrentTimePercent = this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, currentTimeInSeconds);
+    this.controlConfig = { ...this.controlConfig, mediaCurrentTime: currentTimeInSeconds, mediaCurrentTimePercent };
+
+  }
+
+  // update the total duration
+  loadedDataListener() {
+    const totalDurationInSeconds = this.videoPlayer.duration;
+    this.controlConfig = { ...this.controlConfig, mediaDuration: totalDurationInSeconds };
+  }
+
+  loadedMetaDataListener() {
+    console.log('loadedMetaData listener');
+  }
+
+  // heck if video is paused
+  pauseListener() {
+    this.controlConfig = { ...this.controlConfig, isPlaying: false };
+    this.mediaIsPlaying = false;
+  }
+
+  detectMousePresence() {
+
+    this.makePlayerNaked = false;
+
+  }
+
+  detectMouseAbsence() {
+
+    setTimeout(() => {
+      this.makePlayerNaked = this.mediaIsPlaying;
+    }, 300);
 
 
   }
 
-  detectMousePresence(){
+  checkForBuffering() {
+    this.currentPlayPos = this.controlConfig.mediaCurrentTime;
 
-    this.makePlayerNaked= false;
+    // checking offset should be at most the check interval
+    // but allow for some margin
+    const offset = (this.checkInterval - 20) / 1000;
+
+    // if no buffering is currently detected,
+    // and the position does not seem to increase
+    // and the player isn't manually paused...
+    if (
+      !this.videoIsBuffering
+      && this.currentPlayPos == (this.lastPlayPos)
+      && this.mediaIsPlaying
+    ) {
+      this.videoIsBuffering = true;
+    }
+
+    // if we were buffering but the player has advanced,
+    // then there is no buffering
+    if (
+      this.videoIsBuffering
+      && this.currentPlayPos > (this.lastPlayPos)
+      && this.mediaIsPlaying
+    ) {
+      this.videoIsBuffering = false;
+    }
+    this.lastPlayPos = this.currentPlayPos;
+  }
+
+
+  seekbarChanged(event: SliderEventModel) {
+    
+    this.videoPlayer.currentTime = event.newPositionRatio * this.controlConfig.mediaDuration;
 
   }
 
-  detectMouseAbsence(){
-
-    setTimeout(()=>this.makePlayerNaked= this.mediaIsPlaying,300);
-
-
-  }
 }

@@ -1,5 +1,6 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { ControlConfigModel } from '../../models/control-config.models';
+import { SliderEventModel } from '../../models/slider-event.model';
 import { HlsplayerService } from '../../services/hlsplayer.service';
 
 @Component({
@@ -10,6 +11,7 @@ import { HlsplayerService } from '../../services/hlsplayer.service';
 export class ControlBarComponent implements OnInit, AfterViewInit {
 
   @Input('controlConfig') controlConfig: ControlConfigModel;
+  @Output('seekbarChanged') seekbarChanged = new EventEmitter();
 
   @ViewChild('videoSeekBar') videoSeekBarWidget: ElementRef;
   @ViewChild('videoProgress') videoProgressWidget: ElementRef;
@@ -20,22 +22,26 @@ export class ControlBarComponent implements OnInit, AfterViewInit {
   @ViewChild('mediaCurrentTime') mediaCurrentTimeWidget: ElementRef;
   @ViewChild('mediaDuration') mediaDurationWidget: ElementRef;
 
-  volumePercent = 0;
-  mediaCurrentTimePercent = 0;
-
-  constructor(private hlsService: HlsplayerService) { }
+  constructor() { }
 
 
   ngAfterViewInit() {
 
-    // tslint:disable-next-line: max-line-length
-    this.mediaCurrentTimePercent = this. hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, this.controlConfig.mediaCurrentTime);
-    this.volumePercent = this.hlsService.getVolumePercentage(this.controlConfig.volumeLevel);
   }
 
 
 
   ngOnInit(): void {
+
+
+
+  }
+
+  mediaDurationChanged(event) {
+    const sliderEvent: SliderEventModel = {
+      newPositionRatio: event.offsetX / this.videoSeekBarWidget.nativeElement.clientWidth
+    };
+    this.seekbarChanged.emit(sliderEvent);
   }
 
 }
