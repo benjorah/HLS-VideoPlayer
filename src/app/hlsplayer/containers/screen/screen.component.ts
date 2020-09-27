@@ -55,7 +55,7 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hls.loadSource(videoSrc);
       this.hls.attachMedia(this.videoPlayer);
       this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        this.videoPlayer.volume = 0.1;
+        this.videoPlayer.volume = 0;
         this.videoPlayer.play();
         const levels = data.levels.map((level: QualityLevel, index)=>({level: index, resHeight:level.height}));
         this.controlConfig = { ...this.controlConfig, qualityLevels: levels };

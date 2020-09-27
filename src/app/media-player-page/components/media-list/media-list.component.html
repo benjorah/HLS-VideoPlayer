@@ -1,0 +1,11 @@
+<ul class="media-list">
+    <li *ngFor="let media of mediaList" class="media-item">
+        <div class="media-item__art">
+            <img [src]="media.imageUrl" alt="movie art">
+        </div>
+        <div class="media-item__info">
+            <span class="media-item__name">{{media.name}}</span>
+            <span class="media-item__datePublished">{{media.datePublished}}</span>
+        </div>
+    </li>
+</ul>

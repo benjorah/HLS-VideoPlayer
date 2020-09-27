@@ -40,7 +40,7 @@
             <div class="control-bar__picture-quality">
                 <span class="control-bar__picture-quality-num"> {{controlConfig.currentQualityHeight}}p</span>
                 <select open #qualitySelect (change)="qualityChanged(qualitySelect)" class="control-bar__picture-quality-select">
-                  <option *ngFor="let quality of controlConfig.qualityLevels" [value]="quality.level">{{quality.resHeight}}p</option>
+                  <option [selected]="quality.resHeight==controlConfig.currentQualityHeight" *ngFor="let quality of controlConfig.qualityLevels" [value]="quality.level">{{quality.resHeight}}p</option>
                 </select>
 
                 <i class="fa fa-cog"></i>

@@ -8,5 +8,12 @@
     padding-top: 80px;
     width: 100%;
     min-height: 100vh;
-    ;
+    max-height: 100vh;
+}
+
+.media-list {
+    width: 30%;
+    margin-left: 100px;
+    border: solid 2px #23ce6b;
+    overflow: scroll;
 }

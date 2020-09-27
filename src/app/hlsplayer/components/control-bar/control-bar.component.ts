@@ -36,8 +36,6 @@ export class ControlBarComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
 
-    console.log(this.qualitySelectWidget.nativeElement.click());
-
   }
 
 
