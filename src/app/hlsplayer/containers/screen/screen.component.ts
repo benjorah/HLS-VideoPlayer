@@ -1,5 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, OnInit, ViewChild, OnDestroy, ChangeDetectorRef,
+  Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, SimpleChanges
+} from '@angular/core';
 import { ControlConfigModel } from '../../models/control-config.models';
+import { MediaModel } from '../../models/media.model';
 import { QualityLevel } from '../../models/quality-level.model';
 import { SliderEventModel } from '../../models/slider-event.model';
 import { HlsplayerService } from '../../services/hlsplayer.service';
@@ -12,8 +16,10 @@ declare var Hls;
   templateUrl: './screen.component.html',
   styleUrls: ['./screen.component.scss']
 })
-export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('videoWidget') videoWidget: ElementRef;
+  @Input('media') media: MediaModel;
+  @Output('mediaFinished') mediaFinished = new EventEmitter();
   videoPlayer;
   mediaIsPlaying = true;
   makePlayerNaked = false;
@@ -47,28 +53,31 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.videoPlayer = this.videoWidget.nativeElement;
-    const videoSrc = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
-    // const videoSrc = 'https://playertest.longtailvideo.com/adaptive/captions/playlist.m3u8';
+    this.videoPlayer.muted = true;
 
     if (Hls.isSupported()) {
-      this.hls = new Hls();
-      this.hls.loadSource(videoSrc);
-      this.hls.attachMedia(this.videoPlayer);
+
+      this.hls = this.hlsService.preparePlayerForNewStream(new Hls(), this.videoPlayer);
+
+      this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+        console.log('video and hls.js are now bound together !');
+        this.hls.loadSource(this.media.link);
+      });
       this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        this.videoPlayer.volume = 0;
         this.videoPlayer.play();
-        const levels = data.levels.map((level: QualityLevel, index)=>({level: index, resHeight:level.height}));
+
+        const levels = data.levels.map((level: QualityLevel, index) => ({ level: index, resHeight: level.height }));
         this.controlConfig = { ...this.controlConfig, qualityLevels: levels };
       });
 
       this.hls.on(Hls.Events.LEVEL_SWITCHING, (event, data: QualityLevel) => {
-        this.controlConfig= {...this.controlConfig, currentQualityHeight: data.height};
+        this.controlConfig = { ...this.controlConfig, currentQualityHeight: data.height };
 
       });
 
 
     } else if (this.videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-      this.videoPlayer.src = videoSrc;
+      this.videoPlayer.src = this.media.link;
       this.videoPlayer.addEventListener('loadedmetadata', () => {
         this.videoPlayer.play();
 
@@ -78,92 +87,114 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
+  ngOnChanges(changes: SimpleChanges) {
+
+    if (this.videoPlayer) {
+
+      this.hls.detachMedia();
+      this.hlsService.preparePlayerForNewStream(this.hls, this.videoPlayer);
+
+    }
 
 
-// Check if video is playing
-playListener() {
-  this.controlConfig = { ...this.controlConfig, isPlaying: true };
-  this.mediaIsPlaying = true;
-  this.videoIsBuffering = false;
-}
-
-endedListener() {
-  this.videoPlayer.currentTime = 0;
-  this.controlConfig = { ...this.controlConfig, isPlaying: false };
-  this.mediaIsPlaying = false;
-}
-
-// update volume
-volumeChangeListener() {
-  const volumeLevel = this.videoPlayer.volume;
-  this.controlConfig = { ...this.controlConfig, volumeLevelPercent: this.hlsService.getVolumePercentage(volumeLevel) };
-}
-
-// update current time
-timeUpdateListener() {
-  const currentTimeInSeconds = this.videoPlayer.currentTime;
-  const mediaCurrentTimePercent = this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, currentTimeInSeconds);
-  const bufferedTimePercent = this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, this.videoPlayer.buffered.end(0));
-
-  this.controlConfig = { ...this.controlConfig, mediaCurrentTime: currentTimeInSeconds, mediaCurrentTimePercent, bufferedTimePercent };
-
-}
-
-// update the total duration
-loadedDataListener() {
-  const totalDurationInSeconds = this.videoPlayer.duration;
-  this.controlConfig = { ...this.controlConfig, mediaDuration: totalDurationInSeconds };
-}
-
-loadedMetaDataListener() {
-  console.log('loadedMetaData listener');
-}
-
-// heck if video is paused
-pauseListener() {
-  this.controlConfig = { ...this.controlConfig, isPlaying: false };
-  this.mediaIsPlaying = false;
-}
-
-bufferListener() {
-  this.videoIsBuffering = true;
-}
-
-detectMousePresence() {
-
-  this.makePlayerNaked = false;
-
-}
-
-detectMouseAbsence() {
-
-  setTimeout(() => {
-    this.makePlayerNaked = this.mediaIsPlaying;
-  }, 300);
+  }
 
 
-}
 
-seekbarChanged(event: SliderEventModel) {
-  this.videoPlayer.currentTime = event.newPositionRatio * this.controlConfig.mediaDuration;
 
-}
 
-volumeBarChanged(event: SliderEventModel) {
-  this.videoPlayer.volume = event.newPositionRatio;
-}
+  // Check if video is playing
+  playListener() {
+    this.controlConfig = { ...this.controlConfig, isPlaying: true };
+    this.mediaIsPlaying = true;
+    this.videoIsBuffering = false;
+    this.videoPlayer.muted = false;
+  }
 
-togglePlayerMode(){
+  endedListener() {
+    this.controlConfig = { ...this.controlConfig, isPlaying: false };
+    this.mediaIsPlaying = false;
 
-  this.mediaIsPlaying ? this.videoPlayer.pause() : this.videoPlayer.play();
+    if (this.controlConfig.mediaCurrentTime != 0) {
 
-}
+      this.mediaFinished.emit();
+    }
 
-pictureQualityChanged(event: number){
 
-  this.hls.currentLevel = event;
+  }
 
-}
+  // update volume
+  volumeChangeListener() {
+    const volumeLevel = this.videoPlayer.volume;
+    this.controlConfig = { ...this.controlConfig, volumeLevelPercent: this.hlsService.getVolumePercentage(volumeLevel) };
+  }
+
+  // update current time
+  timeUpdateListener() {
+    const currentTimeInSeconds = this.videoPlayer.currentTime;
+    const mediaCurrentTimePercent = this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, currentTimeInSeconds);
+    const bufferedTimePercent = this.videoPlayer.buffered.length > 0 ?
+    this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, this.videoPlayer.buffered.end(0)) : 0;
+
+    this.controlConfig = { ...this.controlConfig, mediaCurrentTime: currentTimeInSeconds, mediaCurrentTimePercent, bufferedTimePercent };
+
+  }
+
+  // update the total duration
+  loadedDataListener() {
+    const totalDurationInSeconds = this.videoPlayer.duration;
+    this.controlConfig = { ...this.controlConfig, mediaDuration: totalDurationInSeconds };
+  }
+
+  loadedMetaDataListener() {
+    console.log('loadedMetaData listener');
+  }
+
+  // heck if video is paused
+  pauseListener() {
+    this.controlConfig = { ...this.controlConfig, isPlaying: false };
+    this.mediaIsPlaying = false;
+  }
+
+  bufferListener() {
+    this.videoIsBuffering = true;
+  }
+
+  detectMousePresence() {
+
+    this.makePlayerNaked = false;
+
+  }
+
+  detectMouseAbsence() {
+
+    setTimeout(() => {
+      this.makePlayerNaked = this.mediaIsPlaying;
+    }, 300);
+
+
+  }
+
+  seekbarChanged(event: SliderEventModel) {
+    this.videoPlayer.currentTime = event.newPositionRatio * this.controlConfig.mediaDuration;
+
+  }
+
+  volumeBarChanged(event: SliderEventModel) {
+    this.videoPlayer.volume = event.newPositionRatio;
+  }
+
+  togglePlayerMode() {
+
+    this.mediaIsPlaying ? this.videoPlayer.pause() : this.videoPlayer.play();
+
+  }
+
+  pictureQualityChanged(event: number) {
+
+    this.hls.currentLevel = event;
+
+  }
 
 
 

@@ -1,5 +1,5 @@
 <ul class="media-list">
-    <li *ngFor="let media of mediaList" class="media-item">
+    <li (click)="playMedia(i)" *ngFor="let media of mediaList; let i=index" class="media-item">
         <div class="media-item__art">
             <img [src]="media.imageUrl" alt="movie art">
         </div>

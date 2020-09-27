@@ -3,7 +3,7 @@
   }" (mouseenter)="detectMousePresence()" (mouseleave)="detectMouseAbsence()" class="video-player">
 
     <div class="video-player__top-bar video-topbar">
-        <app-top-bar [title]="'A title'"></app-top-bar>
+        <app-top-bar [title]="media?.name"></app-top-bar>
     </div>
 
     <div style="cursor: pointer;" (click)="togglePlayerMode()">

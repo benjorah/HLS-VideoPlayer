@@ -4,7 +4,7 @@ export interface MediaItemModel {
 
   name: string;
   datePublished: string;
-  link?: string;
+  link: string;
   imageUrl?: string;
 
 }

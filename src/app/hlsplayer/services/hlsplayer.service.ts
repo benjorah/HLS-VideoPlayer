@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { MediaModel } from '../models/media.model';
 import { SliderEventModel } from '../models/slider-event.model';
+declare var Hls;
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,13 @@ export class HlsplayerService {
 
   }
 
+  preparePlayerForNewStream(hls, videoPlayer: HTMLInputElement) {
 
- 
+    hls.attachMedia(videoPlayer);
+
+    return hls;
+
+  }
+
+
 }
