@@ -23,20 +23,5 @@ export class HlsplayerService {
   }
 
 
-  // getNewSliderPositionFromUserAction(sliderEventObject: SliderEventModel, videoPlayerOffsetLeft: number, totalSliderUnit: number ): number {
-
-  //   // totalSliderUnit could be totalSeconds for a video or 100% for volumes
-  //   // find the true X offset of the video seekbar in relation to it's container
-  //   const tempSeekValue = sliderEventObject.newXPosition - videoPlayerOffsetLeft - sliderEventObject.sliderOffset;
-
-  //   // find the true X offset as a ratio of it's width
-  //   const trueSeekValue = tempSeekValue / sliderEventObject.sliderWidth;
-  //   console.log(trueSeekValue);
-
-
-  //   return trueSeekValue * totalSliderUnit;
-
-
-  // }
-
+ 
 }

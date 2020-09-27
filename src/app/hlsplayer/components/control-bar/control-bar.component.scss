@@ -10,9 +10,18 @@
     .overlay-icon {
         position: absolute;
     }
+    &__bottom {
+        display: flex;
+        justify-content: space-between;
+    }
+    &__right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
     &__seekbar {
         width: 100%;
-        height: 4px;
+        height: 5px;
         background-color: darken(#23ce6b, 25%);
         cursor: pointer;
         overflow: hidden;
@@ -26,7 +35,48 @@
         bottom: 0;
         left: 0;
         margin: auto;
+        z-index: 2;
         transition: all ease 0.25s;
+    }
+    &__buffer {
+        background-color: #ffffff52;
+        width: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        transition: all ease 0.25s;
+    }
+    &__picture-quality {
+        color: darken(#23ce6b, 30%);
+        margin-right: 20px;
+        position: relative;
+        &:hover {
+            cursor: pointer;
+        }
+        &-num {
+            display: inline-block;
+            margin-right: 5px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        &-select {
+            opacity: 0;
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+    &__quality-list {
+        background-color: #e0e0e0e0;
+        position: absolute;
+        z-index: 6;
+        top: -500%;
     }
     .control-btn {
         padding: 0;

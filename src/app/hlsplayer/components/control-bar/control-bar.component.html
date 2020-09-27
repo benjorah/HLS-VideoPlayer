@@ -2,32 +2,56 @@
 
     <div (click)="mediaDurationChanged($event)" (drag)="mediaDurationChanged($event)" #videoSeekBar class="control-bar__seek control-bar__seekbar">
         <span [ngStyle]="{'width': controlConfig.mediaCurrentTimePercent+'%'}" #videoProgress class="control-bar__progress"></span>
+        <span [ngStyle]="{'width': controlConfig.bufferedTimePercent+'%'}" #videoBuffer class="control-bar__buffer"></span>
+
     </div>
 
-    <div class="control-bar__playback-controls">
-        <button #actionButton [ngClass]="{
-          'play':!controlConfig.isPlaying,
-          'pause': controlConfig.isPlaying
-          }" class="control-bar__action-button control-btn play">
+    <div class="control-bar__bottom">
+
+        <div class="control-bar__left">
+
+            <div class="control-bar__playback-controls">
+                <button (click)="toggleAction()" #actionButton [ngClass]="{
+        'play':!controlConfig.isPlaying,
+        'pause': controlConfig.isPlaying
+        }" class="control-bar__action-button control-btn play">
       <i class="fa fa-play overlay-icon play-icon"></i>
       <i class="fa fa-pause overlay-icon pause-icon"></i>
     </button>
-        <div class="control-bar__volume-control">
-            <button #volumeToggle [ngClass]="{
-              'on':controlConfig.volumeLevelPercent>1,
-              'off': 1 >= controlConfig.volumeLevelPercent
-              }" class="control-btn control-bar__volume-toggle on">
+                <div class="control-bar__volume-control">
+                    <button (click)="toggleVolume()" #volumeToggle [ngClass]="{
+            'on':controlConfig.volumeLevelPercent>1,
+            'off': 1 >= controlConfig.volumeLevelPercent
+            }" class="control-btn control-bar__volume-toggle on">
         <i class="fa fa-volume-up overlay-icon volume-on"></i>
         <i class="fa fa-volume-off overlay-icon volume-off"></i>
       </button>
-            <div #volumeSeekBar class="control-bar__volume-seekbar control-bar__seekbar">
-                <span [ngStyle]="{'width': controlConfig.volumeLevelPercent +'%'}" #volumeProgress class="control-bar__progress"></span>
+                    <div (click)="volumeLevelChanged($event)" (drag)="volumeLevelChanged($event)" #volumeSeekBar class="control-bar__volume-seekbar control-bar__seekbar">
+                        <span [ngStyle]="{'width': controlConfig.volumeLevelPercent +'%'}" #volumeProgress class="control-bar__progress"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="control-bar__right">
+            <div class="control-bar__picture-quality">
+                <span class="control-bar__picture-quality-num"> {{controlConfig.currentQualityHeight}}p</span>
+                <select open #qualitySelect (change)="qualityChanged(qualitySelect)" class="control-bar__picture-quality-select">
+                  <option *ngFor="let quality of controlConfig.qualityLevels" [value]="quality.level">{{quality.resHeight}}p</option>
+                </select>
+
+                <i class="fa fa-cog"></i>
+            </div>
+            <div class="control-bar__video-timings">
+                <div #mediaCurrentTime class="control-bar__start-time time">{{controlConfig.mediaCurrentTime | hourminutesecond}}
+                </div>
+                /
+                <div #mediaDuration class="control-bar__end-time time">{{controlConfig.mediaDuration | hourminutesecond}}</div>
             </div>
         </div>
-        <div class="control-bar__video-timings">
-            <div #mediaCurrentTime class="control-bar__start-time time">{{controlConfig.mediaCurrentTime | hourminutesecond}}</div>
-            /
-            <div #mediaDuration class="control-bar__end-time time">{{controlConfig.mediaDuration | hourminutesecond}}</div>
-        </div>
+
     </div>
 </div>
