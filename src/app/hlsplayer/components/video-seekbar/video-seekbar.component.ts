@@ -10,7 +10,7 @@ export class VideoSeekbarComponent implements OnInit {
 
   @Input('heightInPx') heightInPx = 4;
   @Input('progressInPercent') progressInPercent: number;
-  @Input('bufferInPercent') bufferInPercentL : number;
+  @Input('bufferInPercent') bufferInPercent : number;
 
   @Output('videoSeekBarChanged') videoSeekBaerChanged = new EventEmitter();
 
