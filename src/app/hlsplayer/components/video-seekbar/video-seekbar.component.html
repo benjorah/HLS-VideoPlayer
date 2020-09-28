@@ -1,0 +1,6 @@
+<div class="video-seekbar">
+    <div class="video-seekbar__progress">
+        <app-slider (sliderValueChanged)="sliderValueChanged($event)" [sliderWidthInPercent]="progressInPercent" [sliderHeightInPx]="heightInPx"></app-slider>
+    </div>
+    <span [ngStyle]="{'width': bufferInPercent+'%'}" #videoBuffer class="video-seekbar__buffer"></span>
+</div>

@@ -1,3 +1,4 @@
+@import "../../../../styles/abstract/variables";
 .top-bar {
     height: 100%;
     width: 100%;
@@ -6,5 +7,5 @@
     align-items: center;
     text-transform: uppercase;
     font-weight: 600;
-    background-color: #23ce6b;
+    background-color: $color-primary;
 }

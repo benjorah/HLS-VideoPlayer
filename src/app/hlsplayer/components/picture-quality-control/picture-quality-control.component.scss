@@ -1,0 +1,28 @@
+@import "../../../../styles/abstract/variables";
+.picture-quality {
+    color: $color-primary--dark;
+    position: relative;
+    height: 100%;
+    &:hover {
+        color: $color-off-white;
+        // background-color: $color-primary--mild-dark;
+        cursor: pointer;
+    }
+    &__num {
+        display: inline-block;
+        margin-right: .5rem;
+        font-weight: 500;
+        size: 1.4rem;
+        cursor: pointer;
+    }
+    &__select {
+        opacity: 0;
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}

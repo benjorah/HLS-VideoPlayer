@@ -1,0 +1,12 @@
+<div class="volume-control">
+    <button (click)="toggleVolume()" #volumeToggle [ngClass]="{
+'on':volumeLevelInPercent>1,
+'off': 1 >= volumeLevelInPercent
+}" class="volume-control__volume-toggle on">
+<i class="fa fa-volume-up overlay-icon volume-on"></i>
+<i class="fa fa-volume-off overlay-icon volume-off"></i>
+</button>
+    <div class="volume-control__bar">
+        <app-slider (sliderValueChanged)="sliderValueChanged($event)" [sliderWidthInPercent]="volumeLevelInPercent" [sliderHeightInPx]="4"></app-slider>
+    </div>
+</div>

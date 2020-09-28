@@ -1,0 +1,11 @@
+.slider {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    &__progress {
+        display: inline-block;
+        position: absolute;
+        height: 100%;
+        transition: all ease 0.25s;
+    }
+}

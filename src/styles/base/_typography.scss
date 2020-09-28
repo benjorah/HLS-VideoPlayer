@@ -1,0 +1,63 @@
+.text {
+    // font sizes
+    &--large {
+        font-size: $font-size-large !important;
+    }
+    &--medium {
+        font-size: $font-size-medium !important;
+    }
+    &--regular {
+        font-size: $font-size-regular !important;
+    }
+    &--small {
+        font-size: $font-size-small !important;
+    }
+    &--tiny {
+        font-size: $font-size-tiny !important;
+    }
+    &--upper {
+        text-transform: uppercase;
+    }
+    &--lower {
+        text-transform: lowercase;
+    }
+    //   colours
+    &--primary {
+        color: $color-primary !important;
+    }
+    &--black {
+        color: $color-black !important;
+    }
+    &--white {
+        color: $color-white !important;
+    }
+    //   weights
+    &--300 {
+        font-weight: 300 !important;
+    }
+    &--400 {
+        font-weight: 400 !important;
+    }
+    &--500 {
+        font-weight: 500 !important;
+    }
+    &--600 {
+        font-weight: 600 !important;
+    }
+    &--bold {
+        font-weight: bold !important;
+    }
+    &--normal {
+        font-weight: normal !important;
+    }
+    //positioning
+    &--center {
+        text-align: center;
+    }
+    &--left {
+        text-align: left;
+    }
+    &--right {
+        text-align: right;
+    }
+}

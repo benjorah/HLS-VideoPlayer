@@ -1,0 +1,42 @@
+/*basic reset*/
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    box-sizing: border-box;
+    font-family: 'Helvetica Neue', sans-serif !important;
+    font-style: normal;
+}
+
+a {
+    color: inherit !important;
+    transition: all .2s ease-out;
+    &:hover {
+        text-decoration: none !important;
+        // color: //TODO;
+    }
+    &.btn:hover {
+        text-decoration: none;
+    }
+    &:visited {
+        // color: inherit !important;
+    }
+}
+
+input,
+select {
+    font-family: inherit;
+    border-image: none;
+    outline: none;
+    background: transparent;
+}

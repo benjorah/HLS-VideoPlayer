@@ -1,6 +1,6 @@
 <div [ngClass]="{
   'strip-player':makePlayerNaked
-  }" (mouseenter)="detectMousePresence()" (mouseleave)="detectMouseAbsence()" class="video-player">
+  }" (mousemove)="detectMousePresence()" class="video-player">
 
     <div class="video-player__top-bar video-topbar">
         <app-top-bar [title]="media?.name"></app-top-bar>
@@ -23,4 +23,5 @@
     <div class="video-player__control video-control">
         <app-control-bar (pictureQualityChanged)="pictureQualityChanged($event)" (togglePlayerMode)="togglePlayerMode()" (volumeBarChanged)="volumeBarChanged($event)" (seekbarChanged)="seekbarChanged($event)" [controlConfig]="controlConfig"></app-control-bar>
     </div>
+
 </div>

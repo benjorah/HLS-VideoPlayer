@@ -1,0 +1,11 @@
+@mixin child_space_bottom($value) {
+    &:not(:last-child) {
+        margin-bottom: $value;
+    }
+}
+
+@mixin child_space_right($value) {
+    &:not(:last-child) {
+        margin-right: $value;
+    }
+}

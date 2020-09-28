@@ -5,11 +5,14 @@ import { ControlBarComponent } from './components/control-bar/control-bar.compon
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { HlsplayerService } from './services/hlsplayer.service';
 import { SharedModule } from '../shared/shared.module';
+import { VideoSeekbarComponent } from './components/video-seekbar/video-seekbar.component';
+import { VolumeControlComponent } from './components/volume-control/volume-control.component';
+import { PictureQualityControlComponent } from './components/picture-quality-control/picture-quality-control.component';
 
 
 
 @NgModule({
-  declarations: [ScreenComponent, ControlBarComponent, TopBarComponent],
+  declarations: [ScreenComponent, ControlBarComponent, TopBarComponent, VideoSeekbarComponent, VolumeControlComponent, PictureQualityControlComponent],
   imports: [
     CommonModule,
     SharedModule

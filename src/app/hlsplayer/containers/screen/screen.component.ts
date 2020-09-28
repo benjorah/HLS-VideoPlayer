@@ -2,10 +2,10 @@ import {
   AfterViewInit, Component, ElementRef, OnInit, ViewChild, OnDestroy, ChangeDetectorRef,
   Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, SimpleChanges
 } from '@angular/core';
+import { SliderEventModel } from 'src/app/shared/models/slider-event.model';
 import { ControlConfigModel } from '../../models/control-config.models';
 import { MediaModel } from '../../models/media.model';
 import { QualityLevel } from '../../models/quality-level.model';
-import { SliderEventModel } from '../../models/slider-event.model';
 import { HlsplayerService } from '../../services/hlsplayer.service';
 
 
@@ -22,8 +22,9 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   @Output('mediaFinished') mediaFinished = new EventEmitter();
   videoPlayer;
   mediaIsPlaying = true;
-  makePlayerNaked = false;
+  makePlayerNaked = true;
   videoIsBuffering = false;
+  presenceTimeout;
   checkInterval = 300.0; // check every 50 ms (do not use lower values)
   lastPlayPos = 0;
   currentPlayPos = 0;
@@ -75,6 +76,26 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
 
       });
 
+      this.hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              // try to recover network error
+              console.log('fatal network error encountered, try to recover');
+              this.hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.log('fatal media error encountered, try to recover');
+              this.hls.recoverMediaError();
+              break;
+            default:
+              // cannot recover
+              this.hls.destroy();
+              break;
+          }
+        }
+      });
+
 
     } else if (this.videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
       this.videoPlayer.src = this.media.link;
@@ -112,12 +133,13 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
   }
 
   endedListener() {
-    this.controlConfig = { ...this.controlConfig, isPlaying: false };
+    this.controlConfig = { ...this.controlConfig, isPlaying: false, bufferedTimePercent: 0 };
     this.mediaIsPlaying = false;
 
     if (this.controlConfig.mediaCurrentTime != 0) {
 
       this.mediaFinished.emit();
+
     }
 
 
@@ -134,7 +156,7 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     const currentTimeInSeconds = this.videoPlayer.currentTime;
     const mediaCurrentTimePercent = this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, currentTimeInSeconds);
     const bufferedTimePercent = this.videoPlayer.buffered.length > 0 ?
-    this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, this.videoPlayer.buffered.end(0)) : 0;
+      this.hlsService.getSeekBarPercentage(this.controlConfig.mediaDuration, this.videoPlayer.buffered.end(0)) : 0;
 
     this.controlConfig = { ...this.controlConfig, mediaCurrentTime: currentTimeInSeconds, mediaCurrentTimePercent, bufferedTimePercent };
 
@@ -162,15 +184,13 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
 
   detectMousePresence() {
 
+    clearTimeout(this.presenceTimeout); // remove all pending timeouts
     this.makePlayerNaked = false;
 
-  }
+    this.presenceTimeout = setTimeout(() => {
+      this.makePlayerNaked = true;
+    }, 3000);
 
-  detectMouseAbsence() {
-
-    setTimeout(() => {
-      this.makePlayerNaked = this.mediaIsPlaying;
-    }, 300);
 
 
   }
@@ -189,6 +209,7 @@ export class ScreenComponent implements OnInit, AfterViewInit, OnDestroy, OnChan
     this.mediaIsPlaying ? this.videoPlayer.pause() : this.videoPlayer.play();
 
   }
+
 
   pictureQualityChanged(event: number) {
 

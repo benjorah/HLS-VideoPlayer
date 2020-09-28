@@ -1,0 +1,22 @@
+@import "../../../../styles/abstract/variables";
+.video-seekbar {
+    width: 100%;
+    background-color: $color-primary--dark;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    &__progress {
+        position: relative;
+        z-index: 3;
+    }
+    &__buffer {
+        background-color: #ffffff52;
+        width: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        transition: all ease 0.25s;
+    }
+}

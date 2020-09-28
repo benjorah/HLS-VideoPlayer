@@ -1,11 +1,8 @@
 <ul class="media-list">
     <li (click)="playMedia(i)" *ngFor="let media of mediaList; let i=index" class="media-item">
-        <div class="media-item__art">
-            <img [src]="media.imageUrl" alt="movie art">
-        </div>
         <div class="media-item__info">
-            <span class="media-item__name">{{media.name}}</span>
-            <span class="media-item__datePublished">{{media.datePublished}}</span>
+            <span class="media-item__name text--medium">{{media.name}}</span>
+            <span class="media-item__datePublished text--small text--normal">{{media.datePublished}}</span>
         </div>
     </li>
 </ul>

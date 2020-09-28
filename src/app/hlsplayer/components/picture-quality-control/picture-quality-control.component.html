@@ -1,0 +1,8 @@
+<div class="picture-quality text--regular">
+    <span class="picture-quality__num"> {{currentQualityHeight}}p</span>
+    <select open #qualitySelect (change)="qualityChanged(qualitySelect)" class="picture-quality__select">
+    <option [selected]="quality.resHeight==currentQualityHeight" *ngFor="let quality of qualityLevels" [value]="quality.level">{{quality.resHeight}}p</option>
+  </select>
+
+    <i class="fa fa-cog"></i>
+</div>

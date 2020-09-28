@@ -1,0 +1,3 @@
+<div [ngStyle]="{'height': sliderHeightInPx+'px'}" (click)="sliderChanged($event)" (drag)="sliderChanged($event)" #sliderContainer class="slider">
+    <span [ngStyle]="{'width': sliderWidthInPercent+'%','background-color': sliderColorInHex}" #sliderProgress class="slider__progress"></span>
+</div>

@@ -1,0 +1,43 @@
+@import "../../../../styles/abstract/variables";
+.volume-control {
+    display: flex;
+    align-items: center;
+    margin-right: .4rem;
+    .overlay-icon {
+        position: absolute;
+    }
+    &__bar {
+        width: 6rem;
+        background-color: darken(#23ce6b, 25%);
+    }
+    &__volume-toggle {
+        padding: 0;
+        height: 4rem;
+        min-height: 4rem;
+        min-width: 4rem;
+        width: 4rem;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 0;
+        background-color: transparent;
+        color: $color-primary--dark;
+        outline: 0;
+        cursor: pointer;
+        &:hover {
+            color: $color-off-white;
+            background-color: $color-primary--mild-dark;
+        }
+        &.on {
+            .volume-off {
+                display: none;
+            }
+        }
+        &.off {
+            .volume-on {
+                display: none;
+            }
+        }
+    }
+}

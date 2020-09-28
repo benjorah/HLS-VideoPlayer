@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MediaModel } from '../models/media.model';
-import { SliderEventModel } from '../models/slider-event.model';
 declare var Hls;
 
 @Injectable({

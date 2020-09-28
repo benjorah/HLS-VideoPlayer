@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { SliderEventModel } from 'src/app/shared/models/slider-event.model';
 import { ControlConfigModel } from '../../models/control-config.models';
-import { SliderEventModel } from '../../models/slider-event.model';
 import { HlsplayerService } from '../../services/hlsplayer.service';
 
 @Component({
@@ -47,44 +47,25 @@ export class ControlBarComponent implements OnInit, AfterViewInit {
   }
 
   mediaDurationChanged(event) {
-    const sliderEvent: SliderEventModel = {
-      newPositionRatio: event.offsetX / this.videoSeekBarWidget.nativeElement.clientWidth
-    };
-    this.seekbarChanged.emit(sliderEvent);
+
+    this.seekbarChanged.emit(event);
   }
 
   volumeLevelChanged(event){
 
-    const sliderEvent: SliderEventModel = {
-      newPositionRatio: event.offsetX / this.volumeSeekBarWidget.nativeElement.clientWidth
-    };
-    this.volumeBarChanged.emit(sliderEvent);
+    this.volumeBarChanged.emit(event);
 
   }
 
-  toggleVolume(){
 
-    if (this.volumeProgressWidget.nativeElement.clientWidth!=0){
-      this.volumeBeforeToggle = this.controlConfig.volumeLevelPercent/100;
-    }
-
-    const sliderEvent: SliderEventModel = {
-      newPositionRatio: this.volumeProgressWidget.nativeElement.clientWidth==0? this.volumeBeforeToggle:0
-    };
-
-    this.volumeBarChanged.emit(sliderEvent);
-
-    this.qualitySelectWidget.nativeElement.click();
-
-  }
 
   toggleAction(){
 
     this.togglePlayerMode.emit();
   }
 
-  qualityChanged(qualitySelect: HTMLInputElement){
-    this.pictureQualityChanged.emit(Number(qualitySelect.value));
+  qualityChanged(event){
+    this.pictureQualityChanged.emit(event);
   }
 
 }
