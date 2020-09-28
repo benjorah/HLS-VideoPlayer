@@ -8,8 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class PictureQualityControlComponent implements OnInit {
 
-  @Input('qualityLevels') qualityLevels;
-  @Input('currentQualityHeight') currentQualityHeight;
+  @Input('qualityLevels') qualityLevels: { level: number, resHeight: number } ;
+  @Input('currentQualityHeight') currentQualityHeight: number;
   @Output('pictureQualityChanged') pictureQualityChanged = new EventEmitter();
 
 

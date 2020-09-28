@@ -10,14 +10,14 @@ export class HlsplayerService {
   constructor() { }
 
 
-  getSeekBarPercentage(totalTime, currentTime) {
+  getSeekBarPercentage(totalTime: number, currentTime: number) {
 
     const calcPercentage = (currentTime / totalTime) * 100;
     return parseFloat(calcPercentage.toString());
 
   }
 
-  getVolumePercentage(rawVolume) {
+  getVolumePercentage(rawVolume : number) {
 
     return (rawVolume) * 100;
 

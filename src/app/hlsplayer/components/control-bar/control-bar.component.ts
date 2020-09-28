@@ -46,7 +46,7 @@ export class ControlBarComponent implements OnInit, AfterViewInit {
 
   }
 
-  mediaDurationChanged(event) {
+  mediaDurationChanged(event : number) {
 
     this.seekbarChanged.emit(event);
   }

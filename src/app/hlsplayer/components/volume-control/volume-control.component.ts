@@ -8,7 +8,7 @@ import { SliderEventModel } from '../../../shared/models/slider-event.model';
 })
 export class VolumeControlComponent implements OnInit {
   @Output('volumeBarChanged') volumeBarChanged= new EventEmitter();
-  @Input('volumeLevelInPercent') volumeLevelInPercent = 30;
+  @Input('volumeLevelInPercent') volumeLevelInPercent = 0;
 
   volumeBeforeToggle;
   constructor() { }

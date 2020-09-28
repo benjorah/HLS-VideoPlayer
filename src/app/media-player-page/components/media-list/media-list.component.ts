@@ -14,7 +14,7 @@ export class MediaListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  playMedia(index){
+  playMedia(index : number){
     this.mediaClicked.emit(index);
   }
 }
